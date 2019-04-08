@@ -74,6 +74,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "pad-ratio": "^1.0.3",
     "progress-stream": "^2.0.0",
     "stringd": "^1.4.1",
