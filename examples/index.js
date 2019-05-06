@@ -11,3 +11,8 @@ const interval = setInterval(() => {
     clearInterval(interval);
   }
 }, 800);
+
+/**
+ * $ node index.js
+ *   # Start a simple bar
+ */

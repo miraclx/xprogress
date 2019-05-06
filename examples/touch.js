@@ -55,12 +55,15 @@ const fileGen = (function* getFiles(arr) {
 })(files);
 
 const init = output =>
-  output
-    ? new Promise((resolve, reject) => fn(output, {resolve, reject})).finally(() => init(fileGen.next().value))
-    : BarGen.bar.end('Process complete\n');
+  output && new Promise((resolve, reject) => fn(output, {resolve, reject})).finally(() => init(fileGen.next().value));
 
 init(fileGen.next().value);
 
 /*
   Touch a file or files with specified sizes
+
+  $ node ./touch 10MB file1.txt
+    # Touch a file `file1.txt` with Zero bits accumulating to 10 MegaBytes
+  $ node ./touch 1 GB file1.txt file2.txt
+    # Touch two files, 1 Gigabyte each
 */
