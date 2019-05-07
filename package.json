@@ -58,21 +58,21 @@
     ]
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.4.0",
-    "@babel/preset-env": "^7.4.2",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "babel-eslint": "^10.0.1",
     "babel-preset-airbnb": "^3.2.1",
-    "eslint": "^5.15.3",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^4.1.0",
-    "eslint-plugin-import": "^2.16.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.5.0",
-    "prettier": "^1.16.4"
+    "jest": "^24.8.0",
+    "prettier": "^1.17.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.0",
+    "@babel/polyfill": "^7.4.4",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "pad-ratio": "^1.0.3",
