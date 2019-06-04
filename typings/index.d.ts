@@ -92,7 +92,7 @@ declare namespace ProgressBar {
   }
   interface BarOptions extends CoreOptions.GlobOpts { }
   
-  interface StreamProgress {}
+  interface StreamProgress extends ProgressStreamSlice {}
 
   type EventData<T> = {
     bar: T,
@@ -364,7 +364,7 @@ declare class ProgressBar {
    * @param actor The performing function
    * @yields The through instance or a cache model of the ProgressBar
    */
-  slotStreamify(actor: (bar: ProgressBar, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressStreamCoreGenerator<this>;
+  slotStreamify(actor: (bar: ProgressBar, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressBar.ProgressStreamCoreGenerator<this>;
 
   /**
    * Check if the provided object is a ProgressBar
@@ -376,19 +376,19 @@ declare class ProgressBar {
    * Check if the provided object is a bar stream
    * @param bar The progressbar to be checked
    */
-  static isBarStream(barStream: ProgressStream<ProgressBar>): boolean;
+  static isBarStream(barStream: ProgressBar.ProgressStream<ProgressBar>): boolean;
   /**
    * Check if the provided object is a bar stream generator
    * @param bar The progressbar to be checked
    */
-  static isBarGen(barGen: ProgressStreamGenerator<ProgressBar>): boolean;
+  static isBarGen(barGen: ProgressBar.ProgressStreamGenerator<ProgressBar>): boolean;
 
   /**
    * Check if the provided object is in any way related to any of the instances defined within this module.
    * i.e Check whether the object is either a progressbar, a barstream or a bar stream generator
    * @param bar The progressbar to be checked
    */
-  static isBarRelated(barObject: ProgressBar | ProgressStream<ProgressBar> | ProgressStreamGenerator<ProgressBar>): boolean;
+  static isBarRelated(barObject: ProgressBar | ProgressBar.ProgressStream<ProgressBar> | ProgressBar.ProgressStreamGenerator<ProgressBar>): boolean;
 
   /**
    * Calculate slot levels by number of slots
@@ -464,119 +464,121 @@ declare class ProgressBar {
   static streamify<T = ProgressBar>(bar: T, actor: (bar: T, levels: number | number[], variables?: ProgressBar.CoreOptions.StreamVariables) => void, opts?: ProgressBar.SpecBarStreamOpts): ProgressStreamGenerator<T>;
 }
 
-export interface ProgressStream<T> extends RawProgressStream {
-  bar: T;
+  declare namespace ProgressBar {
+  export interface ProgressStream<T> extends RawProgressStream {
+    bar: T;
 
-  on(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  emit(event: 'tick', data: ProgressBar.EventData<T>): boolean;
-  once(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  addListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  removeListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  prependListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  prependOnceListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    on(event: 'tick', listener: (data: EventData<T>) => void): this;
+    emit(event: 'tick', data: EventData<T>): boolean;
+    once(event: 'tick', listener: (data: cEventData<T>) => void): this;
+    addListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    removeListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    prependListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    prependOnceListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
 
-  on(event: "progress", listener: ProgressListener): this;
-  on(event: "length", listener: (length: number) => void): this;
-  once(event: "progress", listener: ProgressListener): this;
-  once(event: "length", listener: (length: number) => void): this;
-  setLength(length: number): void;
-  progress(): ProgressBar.StreamProgress;
+    on(event: "progress", listener: ProgressListener): this;
+    on(event: "length", listener: (length: number) => void): this;
+    once(event: "progress", listener: ProgressListener): this;
+    once(event: "length", listener: (length: number) => void): this;
+    setLength(length: number): void;
+    progress(): StreamProgress;
 
-  // We have to redeclare all on/once overloads from stream.Transform in
-  // order for this ProgressStream interface to extend stream.Transform
-  // correctly. Using an intersection type instead may be an option once
-  // https://github.com/Microsoft/TypeScript/issues/30031 is resolved.
+    // We have to redeclare all on/once overloads from stream.Transform in
+    // order for this ProgressStream interface to extend stream.Transform
+    // correctly. Using an intersection type instead may be an option once
+    // https://github.com/Microsoft/TypeScript/issues/30031 is resolved.
 
-  // stream.Readable events
+    // stream.Readable events
 
-  /* tslint:disable-next-line adjacent-overload-signatures */
-  on(event: "close", listener: () => void): this;
-  on(event: "data", listener: (chunk: any) => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  on(event: "end", listener: () => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  on(event: "readable", listener: () => void): this;
-  on(event: "error", listener: (err: Error) => void): this;
-  /* tslint:disable-next-line adjacent-overload-signatures */
-  once(event: "close", listener: () => void): this;
-  once(event: "data", listener: (chunk: any) => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  once(event: "end", listener: () => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  once(event: "readable", listener: () => void): this;
-  once(event: "error", listener: (err: Error) => void): this;
+    /* tslint:disable-next-line adjacent-overload-signatures */
+    on(event: "close", listener: () => void): this;
+    on(event: "data", listener: (chunk: any) => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    on(event: "end", listener: () => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    on(event: "readable", listener: () => void): this;
+    on(event: "error", listener: (err: Error) => void): this;
+    /* tslint:disable-next-line adjacent-overload-signatures */
+    once(event: "close", listener: () => void): this;
+    once(event: "data", listener: (chunk: any) => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    once(event: "end", listener: () => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    once(event: "readable", listener: () => void): this;
+    once(event: "error", listener: (err: Error) => void): this;
 
-  // stream.Writable events
+    // stream.Writable events
 
-  /* tslint:disable-next-line adjacent-overload-signatures unified-signatures */
-  on(event: "drain", listener: () => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  on(event: "finish", listener: () => void): this;
-  on(event: "pipe", listener: (src: stream.Readable) => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  on(event: "unpipe", listener: (src: stream.Readable) => void): this;
-  /* tslint:disable-next-line adjacent-overload-signatures unified-signatures */
-  once(event: "drain", listener: () => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  once(event: "finish", listener: () => void): this;
-  once(event: "pipe", listener: (src: stream.Readable) => void): this;
-  /* tslint:disable-next-line unified-signatures */
-  once(event: "unpipe", listener: (src: stream.Readable) => void): this;
+    /* tslint:disable-next-line adjacent-overload-signatures unified-signatures */
+    on(event: "drain", listener: () => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    on(event: "finish", listener: () => void): this;
+    on(event: "pipe", listener: (src: stream.Readable) => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    on(event: "unpipe", listener: (src: stream.Readable) => void): this;
+    /* tslint:disable-next-line adjacent-overload-signatures unified-signatures */
+    once(event: "drain", listener: () => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    once(event: "finish", listener: () => void): this;
+    once(event: "pipe", listener: (src: stream.Readable) => void): this;
+    /* tslint:disable-next-line unified-signatures */
+    once(event: "unpipe", listener: (src: stream.Readable) => void): this;
 
-  // events shared by stream.Readable and stream.Writable
+    // events shared by stream.Readable and stream.Writable
 
-  /* tslint:disable-next-line adjacent-overload-signatures */
-  on(event: string | symbol, listener: (...args: any[]) => void): this;
-  /* tslint:disable-next-line adjacent-overload-signatures */
-  once(event: string | symbol, listener: (...args: any[]) => void): this;
-  /* tslint:enable adjacent-overload-signatures unified-signatures */
-}
+    /* tslint:disable-next-line adjacent-overload-signatures */
+    on(event: string | symbol, listener: (...args: any[]) => void): this;
+    /* tslint:disable-next-line adjacent-overload-signatures */
+    once(event: string | symbol, listener: (...args: any[]) => void): this;
+    /* tslint:enable adjacent-overload-signatures unified-signatures */
+  }
 
-export interface ProgressStreamCoreGenerator<T> extends IterableIterator<any> {
-  next(value: [number, ProgressBar.SpecBarStreamOpts]): IteratorResult<ProgressStream<T>>;
-}
+  export interface ProgressStreamCoreGenerator<T> extends IterableIterator<any> {
+    next(value: [number, ProgressBar.SpecBarStreamOpts]): IteratorResult<ProgressStream<T>>;
+  }
 
-export interface ProgressStreamGenerator<T> extends EventEmitter {
-  bar: T;
-  /**
-   * Return a Transform stream for updating the bar
-   */
-  next(): ProgressStream<T>;
-  /**
-   * Return a Transform stream for updatingProgressStreamGenerator the bar
-   * @param opts Options to be used on the progressBar
-   */
-  next(opts: ProgressBar.SpecBarStreamOpts): ProgressStream<T>;
-  /**
-   * Return a Transform stream for updatingProgressStreamGenerator the bar
-   * @param size Maximum size for the current stream
-   */
-  next(size: number): ProgressStream<T>;
-  /**
-   * Return a Transform stream for updating the bar
-   * @param size Maximum size for the current stream
-   * @param opts Options to be used on the progressBar
-   */
-  next(size: number, opts?: ProgressBar.SpecBarStreamOpts): ProgressStream<T>;
+  export interface ProgressStreamGenerator<T> extends EventEmitter {
+    bar: T;
+    /**
+     * Return a Transform stream for updating the bar
+     */
+    next(): ProgressStream<T>;
+    /**
+     * Return a Transform stream for updatingProgressStreamGenerator the bar
+     * @param opts Options to be used on the progressBar
+     */
+    next(opts: ProgressBar.SpecBarStreamOpts): ProgressStream<T>;
+    /**
+     * Return a Transform stream for updatingProgressStreamGenerator the bar
+     * @param size Maximum size for the current stream
+     */
+    next(size: number): ProgressStream<T>;
+    /**
+     * Return a Transform stream for updating the bar
+     * @param size Maximum size for the current stream
+     * @param opts Options to be used on the progressBar
+     */
+    next(size: number, opts?: ProgressBar.SpecBarStreamOpts): ProgressStream<T>;
 
-  on(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  on(event: 'complete', listener: (bar: T) => void): this;
-  
-  emit(event: 'tick', data: ProgressBar.EventData<T>): boolean;
-  emit(event: 'complete', bar: T): boolean;
+    on(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    on(event: 'complete', listener: (bar: T) => void): this;
+    
+    emit(event: 'tick', data: ProgressBar.EventData<T>): boolean;
+    emit(event: 'complete', bar: T): boolean;
 
-  once(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  once(event: 'complete', listener: (bar: T) => void): this;
+    once(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    once(event: 'complete', listener: (bar: T) => void): this;
 
-  addListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  addListener(event: 'complete', listener: (bar: T) => void): this;
+    addListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    addListener(event: 'complete', listener: (bar: T) => void): this;
 
-  removeListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  removeListener(event: 'complete', listener: (bar: T) => void): this;
+    removeListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    removeListener(event: 'complete', listener: (bar: T) => void): this;
 
-  prependListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  prependListener(event: 'complete', listener: (bar: T) => void): this;
+    prependListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    prependListener(event: 'complete', listener: (bar: T) => void): this;
 
-  prependOnceListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-  prependOnceListener(event: 'complete', listener: (bar: T) => void): this;
+    prependOnceListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    prependOnceListener(event: 'complete', listener: (bar: T) => void): this;
+  }
 }
