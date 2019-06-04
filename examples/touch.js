@@ -40,7 +40,7 @@ const fn = (output, content, {resolve, reject}) => {
     .pipe(
       BarGen.next({
         variables: {
-          tag: `[${output}]\n`,
+          tag: `[${output}]`,
         },
       })
         .on('error', reject)
