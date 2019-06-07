@@ -12,6 +12,7 @@ import { HybridRatio as HybridInput } from 'pad-ratio'
 import { ByteString } from 'xbytes'
 import { Colors } from 'stringd-colors'
 import { Progress as ProgressStreamSlice, ProgressStream as RawProgressStream, ProgressListener } from 'progress-stream'
+import { WriteStream } from 'tty';
 
 export = ProgressBar;
 
@@ -114,6 +115,7 @@ declare class ProgressBar {
     total: number;
     append: ProgressBar[];
     length: number;
+    stdout: WriteStream;
     pulsateSlots: { level: number, value: number }[];
   }
   
