@@ -86,10 +86,10 @@ declare namespace ProgressBar {
     stageOpts?: CoreOptions.GlobOpts;
   }
   interface Slot {
-    level: number;
-    value: number;
-    readonly max: number;
-    readonly done: number;
+    max: number;
+    done: number;
+    readonly level: number;
+    readonly percentage: number;
   }
   interface BarOptions extends CoreOptions.GlobOpts { }
   
@@ -135,7 +135,7 @@ declare class ProgressBar {
   /**
    * Build a progress bar
    * @param total Max attainable value by the progressBar
-   * @param slots Allocation of slots in <%>
+   * @param slots Allocation of slots in value relative to `total`
    * @param opts Attachable options
    * `slots` is a [`HybridInput`](http://github.com/miraclx/xprogress#hybridinput)
    */
@@ -187,17 +187,46 @@ declare class ProgressBar {
    * @param perrcentages Percentages to update the slots with
    * @param template Template variable values to use on the drawn progress bar
    */
-  tick(perrcentages: number[], template?: ProgressBar.VariableOpts): this;
+  tick(percentages: number[], template?: ProgressBar.VariableOpts): this;
 
   /**
-   * Update the progressbar to a specific value, balancing all slots
+   * Update the percentage at specified index aggregating multiple slots if any
+   * - The progressbar would be automatically drawn if [template] is provided
+   * @param value Percentage for the entire bar
+   * @param template Template variable values to use on the drawn progress bar
+   * @example
+   *  > this.percentage(70, {}) // Set the bar to 70%
+   */
+  percentage(percentage: number, template?: ProgressBar.VariableOpts): this;
+  /**
+   * Update the progressbar slot percentages in accordance to the array
+   * - The progressbar would be automatically drawn if [template] is provided
+   * @param percentages An array of slot percentages
+   * @param template Template variable values to use on the drawn progress bar
+   * @example
+   *  > this.percentage([42, 60], {}) // Set the percentages of the slots
+ */
+  percentage(percentages: number[], template?: ProgressBar.VariableOpts): this;
+  /**
+   * Update the percentage at specified index
+   * - The progressbar would be automatically drawn if [template] is provided
+   * @param index The index at which to replace percentage
+   * @param value The percentage for the index
+   * @param template Template variable values to use on the drawn progress bar
+   * @example
+   *  > this.percentage(1, 30, {}) // Set the percentage of the slot at index 1 to 30%
+ */
+  percentage(index: number, percentage: number, template?: ProgressBar.VariableOpts): this;
+
+  /**
+   * Update the progressbar with a specific value, balancing all slots
    * - The progressbar would be automatically drawn if [template] is provided
    * @param value The index at which to replace value or an array of all possible values
    * @param template Template variable values to use on the drawn progress bar
    * @example
    *  > this.value(250, {}) // Share 250 across all slots
    */
-  value(value: number, template?: ProgressBar.VariableOpts): this;
+  tickValue(value: number, template?: ProgressBar.VariableOpts): this;
   /**
    * Update the progressbar slot values in accordance to the array
    * - The progressbar would be automatically drawn if [template] is provided
@@ -206,7 +235,7 @@ declare class ProgressBar {
    * @example
    *  > this.value([400, 500], {}) // Set the value of the slots according to array specification
    */
-  value(values: number[], template?: ProgressBar.VariableOpts): this;
+  tickValue(values: number[], template?: ProgressBar.VariableOpts): this;
   /**
    * Update the value at specified index
    * - The progressbar would be automatically drawn if [template] is provided
@@ -216,8 +245,7 @@ declare class ProgressBar {
    * @example
    *  > this.value(1, 500, {}) // Set the value of the slot at index 1 to 50
    */
-  value(index: number, value: number, template?: ProgressBar.VariableOpts): this;
-
+  tickValue(index: number, value: number, template?: ProgressBar.VariableOpts): this;
   /**
    * Update the percentage at specified index aggregating multiple slots if any
    * - The progressbar would be automatically drawn if [template] is provided
@@ -226,7 +254,7 @@ declare class ProgressBar {
    * @example
    *  > this.value(70, {}) // Set the bar to 70%
    */
-  progress(value: number, template?: ProgressBar.VariableOpts): this;
+  value(value: number, template?: ProgressBar.VariableOpts): this;
   /**
    * Update the progressbar slot percentages in accordance to the array
    * - The progressbar would be automatically drawn if [template] is provided
@@ -235,7 +263,7 @@ declare class ProgressBar {
    * @example
    *  > this.value([42, 60], {}) // Set the percentages of the slots
  */
-  progress(percentages: number[], template?: ProgressBar.VariableOpts): this;
+  value(values: number[], template?: ProgressBar.VariableOpts): this;
   /**
    * Update the percentage at specified index
    * - The progressbar would be automatically drawn if [template] is provided
@@ -245,7 +273,7 @@ declare class ProgressBar {
    * @example
    *  > this.value(1, 30, {}) // Set the percentage of the slot at index 1 to 30%
  */
-  progress(index: number, value: number, template?: ProgressBar.VariableOpts): this;
+  value(index: number, value: number, template?: ProgressBar.VariableOpts): this;
 
   /**
    * Get an average round up of values in percentage and current progress compatred to the total
