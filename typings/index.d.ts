@@ -424,14 +424,13 @@ declare class ProgressBar {
    * Calculate slot levels by number of slots
    * @param len Each slot length, inferrable if ratio doesn't make 100 or pop-able if over 100
    */
-  static slotsByCount(len: number): number[];
+  static slotsByCount(len: number): (size: number) => HybridInput;
 
   /**
-   * Calculate slot levels by size
-   * @param size Maximum possible total size
-   * @param slots Each slot length, inferrable if ratio doesn't make 100 or pop-able if over 100
+   * Calculate slot levels by percentage
+   * @param slots Each slot percentage, inferrable if ratio doesn't make 100 or pop-able if over 100
    */
-  static slotsBySize(size: number, slots: number | number[]): number[];
+  static slotsByPercentage(percentages: number[]): (size: number) => HybridInput;
 
     /**
    * Create a streamified bar for use with generators
