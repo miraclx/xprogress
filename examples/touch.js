@@ -13,7 +13,7 @@ const files = args
 
 const count = files.length;
 
-const BarGen = ProgressBar.stream(size * count || Infinity, [...Array(count)].fill(100 / count), {
+const BarGen = ProgressBar.stream(size * count, ProgressBar.slotsByCount(count), {
   bar: {
     separator: '|',
   },

@@ -7,14 +7,12 @@ const {size} = fs.statSync(file);
 
 let count = 1;
 const files =
-  (args = args.length ? args : ['2']).length === 1 && (count = parseInt(args.pop(), 10))
+  (args = args.length ? args : ['2']).length === 1 && (count = parseInt(args[0], 10))
     ? [...Array(count)].map((...[, index]) => `output${index}`)
     : args;
 
-console.log(files);
-process.exit();
-
-const BarGen = ProgressBar.stream(size * count, [...Array(count)].fill(100 / count), {
+const BarGen = ProgressBar.stream(size * count, ProgressBar.slotsByCount(count), {
+  label: 'Copying.',
   bar: {
     separator: '|',
   },
@@ -29,7 +27,7 @@ const fn = (output, {resolve, reject}) => {
     .pipe(
       BarGen.next({
         variables: {
-          tag: `[${file} -> ${output}]\n`,
+          tag: `[${file} -> ${output}]`,
         },
       })
         .on('error', reject)
@@ -49,3 +47,10 @@ const init = output =>
     : BarGen.bar.end('Process complete\n');
 
 init(fileGen.next().value);
+
+/**
+ * $ node cp.js rawfile.txt clone.txt
+ *   # Copy a file by bytes
+ * $ node cp.js rawfile.txt 5
+ *   # Make 5 copies of the file in the format output<N> i.e output1, output2
+ */
