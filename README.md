@@ -137,7 +137,7 @@ npm run build
 
 [BarOpts]: #globopts
 
-[npm]:  https://github.com/npm/npm "The Node Package Manager"
+[npm]:  https://github.com/npm/cli "The Node Package Manager"
 [license]:  LICENSE "Apache 2.0 License"
 
 [stringd]:  https://github.com/miraclx/stringd "NodeJS String Variable Parser"
