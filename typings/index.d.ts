@@ -61,6 +61,7 @@ declare namespace ProgressBar {
   interface StreamVariables extends CoreOptions.SharedVariableOpts {
     eta: string;
     size: ByteString;
+    speed: string;
     progress: ProgressStreamSlice;
     ['eta:raw']: number;
     ['slot:bar']: any;

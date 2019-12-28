@@ -102,6 +102,7 @@ Variables with which to parse [`this.template`](#globopts:template), extended wi
 ### <a id="streamvariables"></a> `StreamVariables` <sub>extends [`VariableOpts`](#variableopts)</sub>: [`Object`][object]
 * `eta`: &lt;[string][]&gt; Duration for the entire progress to end. Parsed by [moment.js]
 * `size`: &lt;[ByteString][]&gt;
+* `speed`: &lt;[string][]&gt;
 * `progress`: &lt;[ProgressStreamSlice][]&gt;
 * `eta:raw`: &lt;[number][]&gt;
 * `slot:bar`: &lt;any&gt;
