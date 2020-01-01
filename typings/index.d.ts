@@ -14,103 +14,15 @@ import { Colors } from 'stringd-colors'
 import { Progress as ProgressStreamSlice, ProgressStream as RawProgressStream, ProgressListener } from 'progress-stream'
 import { WriteStream } from 'tty';
 
-export = ProgressBar;
-
-declare namespace ProgressBar {
-  namespace CoreOptions {
-    interface SharedIgnores {
-      bar: any;
-      label: any;
-      total: any;
-      flipper: any;
-      completed: any;
-      remaining: any;
-      percentage: any;
-    }
-    interface SharedVariableOpts extends Colors, SharedIgnores {
-      tag: any;
-      'color:bar:empty': string;
-      'color:bar:filled': string;
-      'color:bar:header': string;
-    }
-    interface SpecOpts {
-      blot: boolean;
-      label: string;
-      append: boolean;
-      length: (() => number) | number;
-    }
-    interface GlobOpts {
-      bar: {
-        blank: string;
-        filler: string;
-        header: string;
-        colorize: boolean;
-        separator: string;
-        pulsateSkip: number;
-        pulsateLength: number;
-      };
-      clean: boolean;
-      flipper: string | string[];
-      pulsate: boolean;
-      template: string | string[];
-      variables: VariableOpts;
-      forceFirst: boolean;
-    }
-  }
-  interface VariableOpts extends CoreOptions.SharedVariableOpts { }
-  interface StreamVariables extends CoreOptions.SharedVariableOpts {
-    eta: string;
-    size: ByteString;
-    speed: string;
-    progress: ProgressStreamSlice;
-    ['eta:raw']: number;
-    ['slot:bar']: any;
-    ['slot:eta']: string;
-    ['slot:eta:raw']: number;
-    ['slot:size']: ByteString;
-    ['slot:total']: ByteString;
-    ['slot:runtime']: string;
-    ['slot:runtime:raw']: number;
-    ['slot:percentage']: string;
-    ['slot:size:total']: ByteString;
-  }
-  interface SpecBarOpts extends CoreOptions.GlobOpts, CoreOptions.SpecOpts {}
-  interface SpecBarStreamOpts extends CoreOptions.GlobOpts, CoreOptions.SpecOpts {
-    progress: {
-      time: number;
-      pulsate: boolean;
-      infinite: boolean;
-      pulsateSkip: number;
-      pulsateLength: number;
-    };
-    variables: StreamVariables;
-    stageOpts?: CoreOptions.GlobOpts;
-  }
-  interface Slot {
-    max: number;
-    done: number;
-    readonly level: number;
-    readonly percentage: number;
-  }
-  interface BarOptions extends CoreOptions.GlobOpts { }
-  
-  interface StreamProgress extends ProgressStreamSlice {}
-
-  type EventData<T> = {
-    bar: T,
-    progress: ProgressBar.StreamProgress
-  }
-}
-
 /**
  * @copyright (c) 2017 Miraculous Owonubi
  * @author Miraculous Owonubi
  * @license Apache-2.0
  * @module progress2
  */
-declare class ProgressBar {
+class ProgressBar {
   opts: ProgressBar.BarOptions;
-  
+
   cores: {
     label: string;
     total: number;
@@ -119,7 +31,7 @@ declare class ProgressBar {
     stdout: WriteStream;
     pulsateSlots: { level: number, value: number }[];
   }
-  
+
   slots: Array<ProgressBar.Slot>;
 
   /**
@@ -132,7 +44,7 @@ declare class ProgressBar {
    * @param total Max attainable value by the progressBar
    * @param opts Attachable options
    */
-  constructor(total: number, opts?: ProgressBar.SpecBarOpts);
+  constructor(total: number, opts: ProgressBar.SpecBarOpts);
   /**
    * Build a progress bar
    * @param total Max attainable value by the progressBar
@@ -140,7 +52,7 @@ declare class ProgressBar {
    * @param opts Attachable options
    * `slots` is a [`HybridInput`](http://github.com/miraclx/xprogress#hybridinput)
    */
-  constructor(total: number, slots?: HybridInput, opts?: ProgressBar.SpecBarOpts);
+  constructor(total: number, slots: HybridInput, opts?: ProgressBar.SpecBarOpts);
 
   /**
    * Get the progressbar label
@@ -279,12 +191,12 @@ declare class ProgressBar {
   /**
    * Get an average round up of values in percentage and current progress compatred to the total
    */
-  average(): { completed: number, remaining: number, percentage: number };
+  average(): ProgressBar.AverageBarStats;
   /**
    * Get an average round up of values in percentage and current progress compatred to the total
    * @param fixedPoint The fixed point at which to reduce fraction digits
    */
-  average(fixedPoint: number): { completed: number, remaining: number, percentage: number };
+  average(fixedPoint: number): ProgressBar.AverageBarStats;
 
   /**
    * Draw the progressbar
@@ -310,7 +222,7 @@ declare class ProgressBar {
    * Interrupt the bar to write a message
    * @param msgs Interrupt messages to be printed, formattable with %
    */
-  print(...msgs): this;
+  print(...msgs: any[]): this;
   /**
    * Print a message after a bar `draw` interrupt
    * @param type Type of bar print
@@ -322,13 +234,13 @@ declare class ProgressBar {
    * Parse a string with bar options.. useful for constructing the bar
    * @param string The string to be parsed with bar options
    */
-  parseString(string: string): ParsedString<{}>;
+  parseString(string: string): ParsedString<ProgressBar.VariableOpts>;
   /**
    * Parse a string with bar options.. useful for constructing the bar
    * @param str The string to be parsed with bar options
    * @param template Template variable values to use on the drawn progress bar
    */
-  parseString<T = ProgressBar.VariableOpts>(string: string, template: T): ParsedString<T>;
+  parseString<T = ProgressBar.VariableOpts>(string: string, template: T): ParsedString<ProgressBar.VariableOpts & T>;
 
   /**
    * End the bar irrespective of progress
@@ -344,7 +256,7 @@ declare class ProgressBar {
    * Drop the chain, return void
    */
   drop(): void;
-  
+
   /**
    * Drain all slot percentages in the progressbar to 0
    */
@@ -353,14 +265,9 @@ declare class ProgressBar {
   /**
    * Append the specified bar after `this`
    * @param bar The bar to be appended
-   */
-  append(bar: ProgressBar): this;
-  /**
-   * Append the specified bar after `this`
-   * @param bar The bar to be appended
    * @param inherit Whether or not to inherit bar template variable values from `this`
    */
-  append(bar: ProgressBar, inherit: boolean): this;
+  append(bar: ProgressBar, inherit?: boolean): this;
 
   /**
    * Check if the bar is complete
@@ -433,38 +340,38 @@ declare class ProgressBar {
    */
   static slotsByPercentage(percentages: number[]): (size: number) => HybridInput;
 
-    /**
-   * Create a streamified bar for use with generators
-   * @param total Total attainable value of bytes in <N>
-   * @param opts Options for the bar
-   */
-  static stream(total: number, opts?: ProgressBar.SpecBarStreamOpts): ProgressStreamGenerator<ProgressBar>;
+  /**
+ * Create a streamified bar for use with generators
+ * @param total Total attainable value of bytes in <N>
+ * @param opts Options for the bar
+ */
+  static stream(total: number, opts?: ProgressBar.SpecBarStreamOpts): ProgressBar.ProgressStreamGenerator<ProgressBar>;
   /**
    * Create a streamified bar for use with generators
    * @param total Total attainable value of bytes in <N>
    * @param slots Number of slots in <%>
    */
-  static stream(total: number, slots?: HybridInput): ProgressStreamGenerator<ProgressBar>;
+  static stream(total: number, slots?: HybridInput): ProgressBar.ProgressStreamGenerator<ProgressBar>;
   /**
    * Create a streamified bar for use with generators
    * @param total Total attainable value of bytes in <N>
    * @param actor The actor for every yield
    */
-  static stream<T = ProgressBar>(total: number, actor?: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressStreamGenerator<T>;
+  static stream<T = ProgressBar>(total: number, actor?: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressBar.ProgressStreamGenerator<T>;
   /**
    * Create a streamified bar for use with generators
    * @param total Total attainable value of bytes in <N>
    * @param slots Number of slots in <%>
    * @param opts Options for the bar
    */
-  static stream(total: number, slots: HybridInput, opts?: ProgressBar.SpecBarStreamOpts): ProgressStreamGenerator<ProgressBar>;
+  static stream(total: number, slots: HybridInput, opts?: ProgressBar.SpecBarStreamOpts): ProgressBar.ProgressStreamGenerator<ProgressBar>;
   /**
    * Create a streamified bar for use with generators
    * @param total Total attainable value of bytes in <N>
    * @param slots Number of slots in <%>
    * @param actor The actor for every yield
    */
-  static stream<T = ProgressBar>(total: number, slots: HybridInput, actor?: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressStreamGenerator<T>;
+  static stream<T = ProgressBar>(total: number, slots: HybridInput, actor?: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressBar.ProgressStreamGenerator<T>;
   /**
    * Create a streamified bar for use with generators
    * @param total Total attainable value of bytes in <N>
@@ -472,46 +379,83 @@ declare class ProgressBar {
    * @param opts Options for the bar
    * @param actor The actor for every yield
    */
-  static stream<T = ProgressBar>(total: number, slots: HybridInput, opts: ProgressBar.SpecBarStreamOpts, actor?: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressStreamGenerator<T>;
+  static stream<T = ProgressBar>(total: number, slots: HybridInput, opts: ProgressBar.SpecBarStreamOpts, actor?: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void): ProgressBar.ProgressStreamGenerator<T>;
 
   /**
    * Streamify a bar for use with generators
    * @param bar The bar to be used
    */
-  static streamify<T = ProgressBar>(bar: T): ProgressStreamGenerator<T>;
+  static streamify<T = ProgressBar>(bar: T): ProgressBar.ProgressStreamGenerator<T>;
   /**
    * Streamify a bar for use with generators
    * @param bar The bar to be used
    * @param opts Options for the bar
    */
-  static streamify<T = ProgressBar>(bar: T, opts: ProgressBar.SpecBarStreamOpts): ProgressStreamGenerator<T>;
+  static streamify<T = ProgressBar>(bar: T, opts: ProgressBar.SpecBarStreamOpts): ProgressBar.ProgressStreamGenerator<T>;
   /**
    * Streamify a bar for use with generators
    * @param bar The bar to be used
    * @param actor The actor for every yield
    * @param opts Options for the bar
    */
-  static streamify<T = ProgressBar>(bar: T, actor: (bar: T, levels: number | number[], variables?: ProgressBar.CoreOptions.StreamVariables) => void, opts?: ProgressBar.SpecBarStreamOpts): ProgressStreamGenerator<T>;
+  static streamify<T = ProgressBar>(bar: T, actor: (bar: T, levels: number | number[], variables?: ProgressBar.StreamVariables) => void, opts?: ProgressBar.SpecBarStreamOpts): ProgressBar.ProgressStreamGenerator<T>;
 }
 
-  declare namespace ProgressBar {
-  export interface ProgressStream<T> extends RawProgressStream {
+namespace Core {
+  interface SharedIgnores extends ProgressBar.AverageBarStats {
+    bar: any;
+    label: any;
+    total: any;
+    flipper: any;
+  }
+  interface GlobOpts {
+    bar: {
+      blank: string;
+      filler: string;
+      header: string;
+      colorize: boolean;
+      separator: string;
+      pulsateSkip: number;
+      pulsateLength: number;
+    };
+    clean: boolean;
+    flipper: string | string[];
+    pulsate: boolean;
+    template: string | string[];
+    variables: ProgressBar.VariableOpts;
+    forceFirst: boolean;
+  }
+  interface SpecOpts {
+    blot: boolean;
+    label: string;
+    append: boolean;
+    length: (() => number) | number;
+  }
+
+  type ProtoExntends<T, U> = U & Omit<T, keyof U>;
+
+  type EventData<T> = {
+    bar: T,
+    progress: ProgressStreamSlice
+  }
+
+  export interface _ProgressStream<T> {
     bar: T;
 
     on(event: 'tick', listener: (data: EventData<T>) => void): this;
     emit(event: 'tick', data: EventData<T>): boolean;
-    once(event: 'tick', listener: (data: cEventData<T>) => void): this;
-    addListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-    removeListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-    prependListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
-    prependOnceListener(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    once(event: 'tick', listener: (data: EventData<T>) => void): this;
+    addListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    removeListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    prependListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    prependOnceListener(event: 'tick', listener: (data: EventData<T>) => void): this;
 
     on(event: "progress", listener: ProgressListener): this;
     on(event: "length", listener: (length: number) => void): this;
     once(event: "progress", listener: ProgressListener): this;
     once(event: "length", listener: (length: number) => void): this;
     setLength(length: number): void;
-    progress(): StreamProgress;
+    progress(): ProgressStreamSlice;
 
     // We have to redeclare all on/once overloads from stream.Transform in
     // order for this ProgressStream interface to extend stream.Transform
@@ -563,11 +507,66 @@ declare class ProgressBar {
     /* tslint:enable adjacent-overload-signatures unified-signatures */
   }
 
-  export interface ProgressStreamCoreGenerator<T> extends IterableIterator<any> {
-    next(value: [number, ProgressBar.SpecBarStreamOpts]): IteratorResult<ProgressStream<T>>;
+  interface ProgressStreamCoreGenerator<T> extends IterableIterator<any> {
+    next(value?: [number, SpecBarStreamOpts]): IteratorResult<ProgressBar.ProgressStream<T>>;
+  }
+}
+
+namespace ProgressBar {
+  interface AverageBarStats {
+    completed: number;
+    remaining: number;
+    percentage: number;
+  }
+  interface VariableOpts extends Colors, Core.SharedIgnores {
+    tag: any;
+    'color:bar:empty': string;
+    'color:bar:filled': string;
+    'color:bar:header': string;
   }
 
-  export interface ProgressStreamGenerator<T> extends EventEmitter {
+  interface StreamVariables extends VariableOpts {
+    eta: string;
+    size: ByteString;
+    speed: string;
+    progress: ProgressStreamSlice;
+    ['eta:raw']: number;
+    ['slot:bar']: any;
+    ['slot:blank']: string;
+    ['slot:eta']: string;
+    ['slot:eta:raw']: number;
+    ['slot:filler']: string;
+    ['slot:header']: string;
+    ['slot:size']: ByteString;
+    ['slot:total']: ByteString;
+    ['slot:runtime']: string;
+    ['slot:runtime:raw']: number;
+    ['slot:percentage']: string;
+    ['slot:size:total']: ByteString;
+  }
+  interface SpecBarOpts extends Core.GlobOpts, Core.SpecOpts { }
+  interface SpecBarStreamOpts extends Core.GlobOpts, Core.SpecOpts {
+    progress: {
+      time: number;
+      pulsate: boolean;
+      infinite: boolean;
+      pulsateSkip: number;
+      pulsateLength: number;
+    };
+    variables: StreamVariables;
+    stageOpts?: Core.GlobOpts;
+  }
+  interface Slot {
+    max: number;
+    done: number;
+    readonly level: number;
+    readonly percentage: number;
+  }
+  interface BarOptions extends Core.GlobOpts { }
+
+  type ProgressStream<T> = Core.ProtoExntends<RawProgressStream, Core._ProgressStream<T>>
+
+  interface ProgressStreamGenerator<T> extends EventEmitter {
     bar: T;
     /**
      * Return a Transform stream for updating the bar
@@ -577,7 +576,7 @@ declare class ProgressBar {
      * Return a Transform stream for updatingProgressStreamGenerator the bar
      * @param opts Options to be used on the progressBar
      */
-    next(opts: ProgressBar.SpecBarStreamOpts): ProgressStream<T>;
+    next(opts: SpecBarStreamOpts): ProgressStream<T>;
     /**
      * Return a Transform stream for updatingProgressStreamGenerator the bar
      * @param size Maximum size for the current stream
@@ -588,27 +587,35 @@ declare class ProgressBar {
      * @param size Maximum size for the current stream
      * @param opts Options to be used on the progressBar
      */
-    next(size: number, opts?: ProgressBar.SpecBarStreamOpts): ProgressStream<T>;
+    next(size: number, opts?: SpecBarStreamOpts): ProgressStream<T>;
 
-    on(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    on(event: 'end', listener: (bar: T) => void): this;
+    on(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     on(event: 'complete', listener: (bar: T) => void): this;
-    
-    emit(event: 'tick', data: ProgressBar.EventData<T>): boolean;
+
+    emit(event: 'end', bar: T): boolean;
+    emit(event: 'tick', data: Core.EventData<T>): boolean;
     emit(event: 'complete', bar: T): boolean;
 
-    once(event: 'tick', listener: (data: ProgressBar.EventData<T>) => void): this;
+    once(event: 'end', listener: (bar: T) => void): this;
+    once(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     once(event: 'complete', listener: (bar: T) => void): this;
 
-    addListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    addListener(event: 'end', listener: (bar: T) => void): this;
+    addListener(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     addListener(event: 'complete', listener: (bar: T) => void): this;
 
-    removeListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    removeListener(event: 'end', listener: (bar: T) => void): this;
+    removeListener(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     removeListener(event: 'complete', listener: (bar: T) => void): this;
 
-    prependListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    prependListener(event: 'end', listener: (bar: T) => void): this;
+    prependListener(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     prependListener(event: 'complete', listener: (bar: T) => void): this;
 
-    prependOnceListener(event: 'tick', listener: (data: EventData<T>) => void): this;
+    prependOnceListener(event: 'end', listener: (bar: T) => void): this;
+    prependOnceListener(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     prependOnceListener(event: 'complete', listener: (bar: T) => void): this;
   }
 }
+export = ProgressBar;
