@@ -15,7 +15,7 @@ import { Progress as ProgressStreamSlice, ProgressStream as RawProgressStream, P
 import { WriteStream } from 'tty';
 
 /**
- * @copyright (c) 2017 Miraculous Owonubi
+ * @copyright (c) 2020 Miraculous Owonubi
  * @author Miraculous Owonubi
  * @license Apache-2.0
  * @module progress2
