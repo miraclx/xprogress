@@ -589,6 +589,12 @@ namespace ProgressBar {
      */
     next(size: number, opts?: SpecBarStreamOpts): ProgressStream<T>;
 
+    /**
+     * Print a message after a bar `draw` interrupt
+     * @param message The message to printed
+     */
+    print(...message: any[]): T;
+
     on(event: 'end', listener: (bar: T) => void): this;
     on(event: 'tick', listener: (data: Core.EventData<T>) => void): this;
     on(event: 'complete', listener: (bar: T) => void): this;
