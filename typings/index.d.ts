@@ -432,7 +432,7 @@ namespace Core {
     length: (() => number) | number;
   }
 
-  type ProtoExntends<T, U> = U & Omit<T, keyof U>;
+  type ProtoExtends<T, U> = U & Omit<T, keyof U>;
 
   type EventData<T> = {
     bar: T,
@@ -564,7 +564,7 @@ namespace ProgressBar {
   }
   interface BarOptions extends Core.GlobOpts { }
 
-  type ProgressStream<T> = Core.ProtoExntends<RawProgressStream, Core._ProgressStream<T>>
+  type ProgressStream<T> = Core.ProtoExtends<RawProgressStream, Core._ProgressStream<T>>
 
   interface ProgressStreamGenerator<T> extends EventEmitter {
     bar: T;
