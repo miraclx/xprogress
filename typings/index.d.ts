@@ -407,6 +407,7 @@ namespace Core {
     label: string;
     total: number;
     flipper: string;
+    ['bar:complete']: any;
   }
   interface GlobOpts {
     bar: {
