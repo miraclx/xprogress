@@ -520,9 +520,9 @@ namespace ProgressBar {
   }
   interface VariableOpts extends Colors, Core.SharedIgnores {
     tag: any;
-    'color:bar:empty': string;
-    'color:bar:filled': string;
-    'color:bar:header': string;
+    ['color:bar:empty']: string;
+    ['color:bar:filled']: string;
+    ['color:bar:header']: string;
   }
 
   interface StreamVariables extends VariableOpts {
