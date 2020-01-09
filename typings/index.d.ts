@@ -247,8 +247,8 @@ class ProgressBar {
    */
   end(): this;
   /**
-   * End the bar irrespective of progress
-   * @param message The content to be written to `stdout` after to ending the bar
+   * End the bar irrespective of progress with a message.
+   * @param message The message to be printed to `stdout` right before ending the bar
    */
   end(message: string): this;
 
@@ -588,6 +588,16 @@ namespace ProgressBar {
      * @param opts Options to be used on the progressBar
      */
     next(size: number, opts?: SpecBarStreamOpts): ProgressStream<T>;
+
+    /**
+     * End the bar, irrespective of progress
+     */
+    end(): T;
+    /**
+     * End the bar, irrespective of progress, printing a message before ending.
+     * @param message The message to printed
+     */
+    end(...message: any[]): T;
 
     /**
      * Print a message after a bar `draw` interrupt
