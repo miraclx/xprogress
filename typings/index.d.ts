@@ -403,10 +403,10 @@ class ProgressBar {
 
 namespace Core {
   interface SharedIgnores extends ProgressBar.AverageBarStats {
-    bar: any;
-    label: any;
-    total: any;
-    flipper: any;
+    bar: string;
+    label: string;
+    total: number;
+    flipper: string;
   }
   interface GlobOpts {
     bar: {
