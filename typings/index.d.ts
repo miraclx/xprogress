@@ -539,7 +539,7 @@ namespace ProgressBar {
     ['slot:filler']: string;
     ['slot:header']: string;
     ['slot:size']: ByteString;
-    ['slot:total']: ByteString;
+    ['size:total']: ByteString;
     ['slot:runtime']: string;
     ['slot:runtime:raw']: number;
     ['slot:percentage']: string;
