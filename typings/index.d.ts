@@ -532,7 +532,6 @@ namespace ProgressBar {
     speed: string;
     progress: ProgressStreamSlice;
     ['eta:raw']: number;
-    ['size:raw']: number;
     ['slot:bar']: any;
     ['slot:blank']: string;
     ['slot:eta']: string;
@@ -542,7 +541,6 @@ namespace ProgressBar {
     ['slot:size']: ByteString;
     ['slot:size:raw']: number;
     ['size:total']: ByteString;
-    ['size:total:raw']: number;
     ['slot:runtime']: string;
     ['slot:runtime:raw']: number;
     ['slot:percentage']: string;
