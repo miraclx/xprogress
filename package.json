@@ -76,6 +76,7 @@
     "pad-ratio": "^1.1.1",
     "pretty-ms": "^5.1.0",
     "progress-stream": "^2.0.0",
+    "speedometer": "^1.1.0",
     "stringd": "^1.5.1",
     "stringd-colors": "^1.6.1",
     "xbytes": "^1.5.2"
