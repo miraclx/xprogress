@@ -530,6 +530,7 @@ namespace ProgressBar {
     eta: string;
     size: ByteString;
     speed: string;
+    ['speed:raw']: string;
     progress: ProgressStreamSlice;
     ['eta:raw']: number;
     ['slot:bar']: any;
