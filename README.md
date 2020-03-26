@@ -108,7 +108,7 @@ Variables with which to parse [`this.template`](#globopts:template), extended wi
 - `size`: &lt;[ByteString]&gt; Human readable size for the number of total transferred bytes. Parsed by [xbytes]
 - `speed`: &lt;[string]&gt; Human readable speed for the number of bits transferred per second. Parsed by [xbytes]
 - `progress`: &lt;[ProgressStreamSlice]&gt; The Progress Object
-- `eta:raw`: &lt;[number][&gt; Duration estimate of how long it would take for the stream to end based on the number of bytes being steadily transmitted per second.
+- `eta:raw`: &lt;[number]&gt; Duration estimate of how long it would take for the stream to end based on the number of bytes being steadily transmitted per second.
 - `slot:bar`: &lt;[string]&gt; The bar for the active chunk of the progressbar.
 - `slot:blank`: &lt;[string]&gt; The character with which to be used as the slot's blank character.
 - `slot:eta`: &lt;[string][&gt; Duration estimate for the active chunk to be completed. Parsed by [prettyMs]
