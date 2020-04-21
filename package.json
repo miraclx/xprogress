@@ -11,7 +11,7 @@
     "postversion": "npm run push"
   },
   "engines": {
-    "node": ">=1"
+    "node": ">=6"
   },
   "files": [
     "dist",
@@ -51,7 +51,7 @@
         {
           "corejs": true,
           "targets": {
-            "node": 1
+            "node": 6
           }
         }
       ]
