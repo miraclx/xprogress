@@ -71,7 +71,6 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.8.7",
     "lodash": "^4.17.15",
     "pad-ratio": "^2.0.0",
     "pretty-ms": "^5.1.0",
