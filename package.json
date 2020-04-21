@@ -73,7 +73,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
     "lodash": "^4.17.15",
-    "pad-ratio": "^1.1.1",
+    "pad-ratio": "^2.0.0",
     "pretty-ms": "^5.1.0",
     "progress-stream": "^2.0.0",
     "speedometer": "^1.1.0",
