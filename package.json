@@ -76,8 +76,8 @@
     "pretty-ms": "^5.1.0",
     "progress-stream": "^2.0.0",
     "speedometer": "^1.1.0",
-    "stringd": "^2.0.0",
-    "stringd-colors": "^1.8.0",
+    "stringd": "^2.1.0",
+    "stringd-colors": "^1.9.0",
     "xbytes": "^1.6.0"
   },
   "homepage": "https://github.com/miraclx/xprogress#readme",
