@@ -1,6 +1,6 @@
 {
   "name": "xprogress",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Dynamic, Flexible, extensible progressive CLI bar for the terminal built with NodeJS",
   "exports": "./index.js",
   "type": "module",
