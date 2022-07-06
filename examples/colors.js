@@ -6,10 +6,10 @@ const bar = new ProgressBar(100, [50, 50], {
     separator: '|',
   },
   variables: {
-    'color:bar:empty': ':{color:yellow}',
-    'color:bar:filled': ':{color:bgWhite}:{color:red}',
-    'color:bar:header': ':{color:green}',
-    'color:bar:separator': ':{color:red}',
+    'color:bar:empty': ':{color(yellow)}',
+    'color:bar:filled': ':{bgcolor(white)}:{color(red)}',
+    'color:bar:header': ':{color(green)}',
+    'color:bar:separator': ':{color(red)}',
   },
   forceFirst: false,
 });

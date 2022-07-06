@@ -15,9 +15,9 @@ import xbytes from 'xbytes';
 import stringd from 'stringd';
 import prettyMs from 'pretty-ms';
 import padRatio from 'pad-ratio';
-import cStringd from 'stringd-colors';
 import speedometer from 'speedometer';
 import progressStream from 'progress-stream';
+import {raw as cStringdRaw} from 'stringd-colors';
 
 const globOpts = {
   bar: {
@@ -37,7 +37,7 @@ const globOpts = {
   template: '',
   variables: {
     tag: ({tag}) => (tag && typeof tag !== 'function' ? `${tag}\n` : ''),
-    ...cStringd.raw,
+    ...cStringdRaw,
     'color:bar:empty': ':{color:close}',
     'color:bar:header': ':{color(green)}',
     'color:bar:filled': ':{bgcolor(green)}:{color(black)}',
