@@ -23,18 +23,11 @@ npm install xprogress
 
 ## Usage
 
-``` javascript
-// Node CommonJS
-const ProgressBar = require('xprogress');
-// Or ES6
-import ProgressBar from 'xprogress';
-```
-
-## Example
-
 Create a basic progress bar that updates itself with 10% twice every second until it's at maximum
 
 ``` javascript
+import ProgressBar from 'xprogress';
+
 const ProgressBar = require('xprogress');
 
 const bar = new ProgressBar(100);
@@ -130,14 +123,13 @@ This content here is parsed by [pad-ratio][] in the construct of an [HybridInput
 
 ### Building
 
-Feel free to clone, use in adherance to the [license](#license) and perhaps send pull requests
+Feel free to clone, use in adherance to the [license](#license). Pull requests are very much welcome.
 
 ``` bash
 git clone https://github.com/miraclx/xprogress.git
 cd xprogress
 npm install
 # hack on code
-npm run build
 ```
 
 ## License

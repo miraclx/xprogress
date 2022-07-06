@@ -1,4 +1,4 @@
-const ProgressBar = require('..');
+import ProgressBar from '../index.js';
 
 const bar = new ProgressBar(100, [50, 50], {
   bar: {

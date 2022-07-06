@@ -2,18 +2,15 @@
   "name": "xprogress",
   "version": "0.18.0",
   "description": "Dynamic, Flexible, extensible progressive CLI bar for the terminal built with NodeJS",
-  "main": "dist/index.js",
-  "types": "typings/index.d.ts",
-  "scripts": {
-    "build": "babel lib -d dist",
-    "version": "npm run build"
-  },
+  "exports": "./index.js",
+  "type": "module",
+  "types": "index.d.ts",
   "engines": {
-    "node": ">=6"
+    "node": ">=12"
   },
   "files": [
-    "dist",
-    "typings"
+    "index.js",
+    "index.d.ts"
   ],
   "keywords": [
     "bar",
@@ -41,32 +38,11 @@
     "url": "https://github.com/miraclx/xprogress/issues"
   },
   "license": "Apache-2.0",
-  "babel": {
-    "presets": [
-      "airbnb",
-      [
-        "@babel/preset-env",
-        {
-          "corejs": true,
-          "targets": {
-            "node": 6
-          }
-        }
-      ]
-    ]
-  },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
-    "babel-eslint": "^10.1.0",
-    "babel-preset-airbnb": "^3.3.2",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-config-prettier": "^4.3.0",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-prettier": "^3.1.3",
-    "prettier": "^1.19.1"
+    "eslint": "8.19.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "jest": "^28.1.2",
+    "prettier": "2.7.1"
   },
   "dependencies": {
     "lodash.merge": "^4.6.2",

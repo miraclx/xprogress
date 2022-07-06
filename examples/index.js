@@ -1,4 +1,9 @@
-const ProgressBar = require('..');
+/**
+ * $ node index.js
+ *   # Start a simple bar
+ */
+
+import ProgressBar from '../index.js';
 
 const bar = new ProgressBar(1024);
 
@@ -11,8 +16,3 @@ const interval = setInterval(() => {
     clearInterval(interval);
   }
 }, 800);
-
-/**
- * $ node index.js
- *   # Start a simple bar
- */

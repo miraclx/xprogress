@@ -6,11 +6,11 @@
  */
 
 import {format} from 'util';
-import merge from 'lodash.merge';
 import {openSync} from 'fs';
 import tty from 'tty';
 import EventEmitter from 'events';
 
+import merge from 'lodash.merge';
 import xbytes from 'xbytes';
 import stringd from 'stringd';
 import prettyMs from 'pretty-ms';
@@ -31,7 +31,6 @@ const globOpts = {
   },
   label: 'Loading',
   clean: !1,
-  // eslint-disable-next-line no-use-before-define
   length: 40,
   flipper: ['|', '/', '-', '\\'],
   pulsate: !1,
@@ -112,7 +111,6 @@ function parseBar(opts, fillable, percentage, headers = !opts.pulsate) {
   fillable = Math.round(fillable);
   let filled = Math.round((Math.min(100, percentage) / 100) * fillable);
   let empty = fillable - filled;
-  // eslint-disable-next-line prefer-const
   let {filler, blank, header} = opts.bar;
   [filled, empty] = [filled, empty].map(Math.floor);
   [filler, blank] = [filler, blank].map(content => (Array.isArray(content) || typeof content === 'string' ? content : ''));
@@ -127,7 +125,10 @@ function parseBar(opts, fillable, percentage, headers = !opts.pulsate) {
   );
 }
 
-const xprettyMs = (_ => sec => (Number.isFinite(sec) ? _(sec) : '\u221e'))(prettyMs);
+const xprettyMs = (
+  _ => sec =>
+    Number.isFinite(sec) ? _(sec) : '\u221e'
+)(prettyMs);
 
 /**
  * Create a pulsate bar
@@ -156,7 +157,7 @@ function pulsateBar(bar, slots, skip, sep = '') {
 
 class ProgressGen extends EventEmitter {}
 
-class ProgressBar {
+export default class ProgressBar {
   /**
    * Build a progress bar
    * @param {Number} total Max attainable value by the progressBar
@@ -454,6 +455,7 @@ class ProgressBar {
       (normie ? process.stdout : self.cores.stdout).write(
         `${dontClean && ending && addons ? '\n' : ''}${self
           .parseString(format(...arr))
+          // eslint-disable-next-line no-control-regex
           .replace(self.opts.bar.colorize ? '' : /\x1b\[\d+m/g, '')}`,
       );
     };
@@ -466,7 +468,13 @@ class ProgressBar {
         ? !!cleanWrite(content, this.justLogged, this.hasBarredOnce ? addonPack[1] : addons)
         : type === 'end'
         ? !!cleanWrite(content, !this.opts.clean, addons, true, true)
-        : !cleanWrite([(type.startsWith(':') && `${type.slice(1)}`) || type, ...content, '\n'], this.justLogged, addons, false, true);
+        : !cleanWrite(
+            [(type.startsWith(':') && `${type.slice(1)}`) || type, ...content, '\n'],
+            this.justLogged,
+            addons,
+            false,
+            true,
+          );
     if (this.justLogged && this.hasBarredOnce) this.draw(this.oldBar);
     return this;
   }
@@ -495,7 +503,6 @@ class ProgressBar {
   /**
    * Drop the chain, return void
    */
-  // eslint-disable-next-line class-methods-use-this
   drop() {}
 
   /**
@@ -650,19 +657,21 @@ class ProgressBar {
     ];
     let defaultUnit;
     const progressGen = new ProgressGen();
-    const buildBytesWith = (bytes, byteOpts = {}) => (props, data) =>
-      xbytes.createRelativeSizer((data && (data.args[0] || data.matched.unit)) || defaultUnit, {
-        iec: data && 'iec' in data.matched ? data.matched.iec === 'true' : byteOpts.iec || !1,
-        bits: data && 'bits' in data.matched ? data.matched.bits === 'true' : byteOpts.bits || !1,
-        fixed: data && 'fixed' in data.matched ? parseInt(data.matched.fixed, 10) : byteOpts.fixed || 2,
-        short: data && 'short' in data.matched ? data.matched.short === 'true' : byteOpts.short || !0,
-        space: data && 'space' in data.matched ? data.matched.space === 'true' : byteOpts.space || !0,
-        sticky: data && 'sticky' in data.matched ? data.matched.sticky === 'true' : byteOpts.sticky || !1,
-      })(typeof bytes === 'function' ? bytes(props) : bytes);
+    const buildBytesWith =
+      (bytes, byteOpts = {}) =>
+      (props, data) =>
+        xbytes.createRelativeSizer((data && (data.args[0] || data.matched.unit)) || defaultUnit, {
+          iec: data && 'iec' in data.matched ? data.matched.iec === 'true' : byteOpts.iec || !1,
+          bits: data && 'bits' in data.matched ? data.matched.bits === 'true' : byteOpts.bits || !1,
+          fixed: data && 'fixed' in data.matched ? parseInt(data.matched.fixed, 10) : byteOpts.fixed || 2,
+          short: data && 'short' in data.matched ? data.matched.short === 'true' : byteOpts.short || !0,
+          space: data && 'space' in data.matched ? data.matched.space === 'true' : byteOpts.space || !0,
+          sticky: data && 'sticky' in data.matched ? data.matched.sticky === 'true' : byteOpts.sticky || !1,
+        })(typeof bytes === 'function' ? bytes(props) : bytes);
     const buildSpeedWith = speed => (_, data) =>
-      `${buildBytesWith(speed, {iec: !1, bits: !0, fixed: 2, short: !0, space: !1, sticky: !1})(_, data)}${(data &&
-        data.matched.metric) ||
-        'ps'}`;
+      `${buildBytesWith(speed, {iec: !1, bits: !0, fixed: 2, short: !0, space: !1, sticky: !1})(_, data)}${
+        (data && data.matched.metric) || 'ps'
+      }`;
     const totalSpeed = speedometer(5000);
     const streamGenerator = bar.slotStreamify((slotIndex, total, infinite) => {
       const max = !infinite ? Math.round((bar.slots[slotIndex].level / 100) * bar.total()) : Infinity;
@@ -773,5 +782,3 @@ class ProgressBar {
         : (merge(this.opts, args[1]), actor(Math.floor(level - 1), args[0], this.opts.progress.infinite));
   }
 }
-
-module.exports = ProgressBar;

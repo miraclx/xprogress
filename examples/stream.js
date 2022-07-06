@@ -1,5 +1,5 @@
-const stream = require('stream');
-const ProgressBar = require('..');
+import stream from 'stream';
+import ProgressBar from '../index.js';
 
 const waterMark = 2 ** 16 - 1;
 const count = 10e3;
