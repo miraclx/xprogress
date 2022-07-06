@@ -69,7 +69,7 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "lodash": "^4.17.15",
+    "lodash.merge": "^4.6.2",
     "pad-ratio": "^2.0.0",
     "pretty-ms": "^5.1.0",
     "progress-stream": "^2.0.0",
