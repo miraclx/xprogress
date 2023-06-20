@@ -87,16 +87,26 @@ const streamOpts = {
  * Get a persistent tty output stream
  * @returns {tty.WriteStream} The writable stream instance similar to `process.stdout`
  */
-function getPersistentStdout() {
+export function getPersistentStdout(device = getPersistentStdout.stdout) {
   const self = getPersistentStdout;
   self.stdout =
-    self.stdout && self.stdout.isTTY
+    device && device.isTTY
+      ? device
+      : self.stdout && self.stdout.isTTY
       ? self.stdout
       : process.stdout.isTTY
       ? process.stdout
       : process.stderr.isTTY
       ? process.stderr
-      : new tty.WriteStream(openSync('/dev/tty', 'w'));
+      : null;
+  if (!self.stdout) {
+    try {
+      const fd = openSync('/dev/tty', 'w');
+      self.stdout = new tty.WriteStream(fd);
+    } catch (e) {
+      if (e.code !== 'ENXIO') throw e;
+    }
+  }
   return self.stdout;
 }
 
@@ -179,7 +189,7 @@ export default class ProgressBar {
       label: this.opts.label,
       append: [],
       length: this.opts.length,
-      stdout: getPersistentStdout(),
+      stdout: getPersistentStdout(this.opts.writeStream),
       pulsateSlots: [
         [0, 0],
         [this.opts.bar.pulsateLength, 100],
@@ -218,7 +228,7 @@ export default class ProgressBar {
    * @param {number} [value] The value to set the progressBar length to
    */
   length(value) {
-    const len = getPersistentStdout().columns;
+    const len = this.cores.stdout.columns;
     const core = this.cores.length;
     if (value && ['function', 'number'].includes(typeof value)) {
       this.cores.length = value;

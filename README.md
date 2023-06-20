@@ -79,6 +79,7 @@ const bar = new ProgressBar(100, [20, 44]);
 - <a id="globopts:template"></a> `template`: &lt;[string][]|[string][][]&gt; The template to use for the progressbar view. This is parsed by [stringd][]. with [`this.variables`](#globopts:variables) **Default**: `''`.
 - <a id="globopts:variables"></a> `variables`: &lt;[VariableOpts](#variableopts)&gt; Variables with which to parse [`this.template`](#globopts:template), extended with [`cStringd.raw`][cstringd:raw].
 - `forceFirst`: &lt;[boolean][]&gt; Whether or not to force a multi-bar progressbar to a single bar (useful either when terminal width is too small or when filled with excess addons). **Default**: `false`.
+- `writeStream`: &lt;[WriteStream][]&gt; The tty-ish writable stream we are writing to. **Default**: [stdout](https://nodejs.org/api/process.html#processstdout).
 
 The global options shared by both [ProgressBar](#progressbar) and [ProgressStream](#progressstream).
 
@@ -134,7 +135,7 @@ npm install
 
 ## License
 
-[Apache 2.0][license] © **Miraculous Owonubi** ([@miraclx][author-url]) &lt;omiraculous@gmail.com&gt;
+[Apache 2.0][license] © **Miraculous Owonubi** ([@miraclx][author-url]) &lt;<omiraculous@gmail.com>&gt;
 
 [BarOpts]: #globopts
 
@@ -144,7 +145,6 @@ npm install
 [stringd]:  https://github.com/miraclx/stringd "NodeJS String Variable Parser"
 [xbytes]:  https://github.com/miraclx/xbytes "NodeJS ByteParser"
 [prettyMs]:  https://github.com/sindresorhus/pretty-ms "Convert milliseconds to a human readable string: `1337000000` → `15d 11h 23m 20s`"
-[cstringd]:  https://github.com/miraclx/stringd-colors "ANSI colors for stringd formatting"
 [pad-ratio]:  https://github.com/miraclx/pad-ratio "Pad or trim an array to sum up to a maximum value"
 [hybridinput]:  https://github.com/miraclx/pad-ratio#hybridinput
 [ProgressStreamSlice]: https://github.com/freeall/progress-stream#progress
@@ -152,7 +152,6 @@ npm install
 [cstringd:raw]:  https://github.com/miraclx/stringd-colors#cstringdraw "Raw ANSI codes for stringd-colors"
 
 [author-url]: https://github.com/miraclx
-[ansi-styles]:  https://github.com/chalk/ansi-styles "ANSI escape codes for styling strings in the terminal"
 [xprogress-result]: screenshots/example.gif "StringD Colors Example"
 
 [npm-url]: https://npmjs.org/package/xprogress
@@ -162,8 +161,8 @@ npm install
 [downloads-image]: https://badgen.net/npm/dm/xprogress
 
 [object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
-[regexp]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
-[function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
 [number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type
 [string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type
 [boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type
+
+[WriteStream]: https://nodejs.org/api/tty.html#class-ttywritestream

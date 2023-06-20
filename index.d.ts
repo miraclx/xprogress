@@ -425,6 +425,7 @@ namespace Core {
     template: string | string[];
     variables: ProgressBar.VariableOpts;
     forceFirst: boolean;
+    writeStream: WriteStream;
   }
   interface SpecOpts {
     blot: boolean;
