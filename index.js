@@ -455,14 +455,14 @@ export default class ProgressBar {
     const self = this;
     type = format(type);
     if (!self.cores.stdout.isTTY) throw Error("Can't draw or print progressBar interrupts with piped output");
-    const cleanWrite = function cleanWrite(arr, dontClean, addons = 0, ending = false, normie = false) {
+    const cleanWrite = function cleanWrite(arr, dontClean, addons = 0, ending = false) {
       if (!dontClean) {
         // check https://github.com/freeall/single-line-log/blob/515b3b99b699396c2ad5f937e4b490b6f9fbff0e/index.js#L1-L3
         self.cores.stdout.moveCursor(0, -addons);
         self.cores.stdout.cursorTo(0);
         self.cores.stdout.clearScreenDown();
       }
-      (normie ? process.stdout : self.cores.stdout).write(
+      self.cores.stdout.write(
         `${dontClean && ending && addons ? '\n' : ''}${self
           .parseString(format(...arr))
           // eslint-disable-next-line no-control-regex
@@ -477,14 +477,8 @@ export default class ProgressBar {
         : (addonPack = type.match(/^bar\+(\d+)/)) !== null
         ? !!cleanWrite(content, this.justLogged, this.hasBarredOnce ? addonPack[1] : addons)
         : type === 'end'
-        ? !!cleanWrite(content, !this.opts.clean, addons, true, true)
-        : !cleanWrite(
-            [(type.startsWith(':') && `${type.slice(1)}`) || type, ...content, '\n'],
-            this.justLogged,
-            addons,
-            false,
-            true,
-          );
+        ? !!cleanWrite(content, !this.opts.clean, addons, true)
+        : !cleanWrite([(type.startsWith(':') && `${type.slice(1)}`) || type, ...content, '\n'], this.justLogged, addons, false);
     if (this.justLogged && this.hasBarredOnce) this.draw(this.oldBar);
     return this;
   }
