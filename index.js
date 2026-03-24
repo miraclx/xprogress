@@ -54,7 +54,7 @@ const defaultOptions = {
 const streamOpts = {
   ...globOpts,
   pulsate: false,
-  progress: {time: 100, pulsate: false, infinite: !1, pulsateSkip: 15, pulsateLength: 15},
+  progress: {time: 200, pulsate: false, infinite: !1, pulsateSkip: 15, pulsateLength: 15},
   template: [
     ':{label}',
     ' |:{slot:bar}| [:3{slot:percentage}%] (:{slot:eta}) [:{speed}] [:{slot:size}/:{slot:size:total}]',
