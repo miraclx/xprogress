@@ -167,6 +167,28 @@ function pulsateBar(bar, slots, skip, sep = '') {
   return stack.map(({fillable, percentage}) => parseBar(bar.opts, fillable, percentage, false));
 }
 
+// eslint-disable-next-line no-control-regex
+const ANSI_RE = /\x1b\[[^m]*m/g;
+function trimLine(line, cols) {
+  let visible = 0;
+  let i = 0;
+  let result = '';
+  while (i < line.length) {
+    ANSI_RE.lastIndex = i;
+    const ansi = ANSI_RE.exec(line);
+    if (ansi && ansi.index === i) {
+      result += ansi[0];
+      i += ansi[0].length;
+      continue;
+    }
+    if (visible >= cols) break;
+    result += line[i];
+    visible++;
+    i++;
+  }
+  return visible < line.replace(ANSI_RE, '').length ? `${result}\x1b[0m` : result;
+}
+
 class ProgressGen extends EventEmitter {}
 
 export default class ProgressBar {
@@ -215,6 +237,20 @@ export default class ProgressBar {
     delete this.opts.label;
     delete this.opts.append;
     delete this.opts.length;
+    this.#resizeHandler = () => {
+      if (!this.hasBarredOnce || this.isEnded) return;
+      const stdout = this.cores.stdout;
+      this.#resizing = true;
+      stdout.moveCursor(0, -(this.oldBar.length - 1));
+      stdout.cursorTo(0);
+      stdout.clearScreenDown();
+      clearTimeout(this.#resizeTimer);
+      this.#resizeTimer = setTimeout(() => {
+        this.#resizing = false;
+        this.draw(this.oldBar);
+      }, 100);
+    };
+    this.cores.stdout?.on('resize', this.#resizeHandler);
   }
 
   /**
@@ -392,13 +428,20 @@ export default class ProgressBar {
           ...this.constructBar(template).split('\n'),
           ...this.cores.append.map(block => block.bar.constructBar(block.inherit ? template : null)),
         ];
+    const prevLength = this.hasBarredOnce ? this.oldBar.length : 0;
     this.oldBar = result;
-    this.print(`bar${result.length ? `+${result.length - 1}` : ''}`, result.join('\n'));
+    if (!this.#resizing) {
+      this.#printLines(result, this.justLogged, prevLength ? prevLength - 1 : 0);
+      this.justLogged = false;
+    }
     this.hasBarredOnce = !0;
     return this;
   }
 
   #flipperCount = 0;
+  #resizeHandler = null;
+  #resizeTimer = null;
+  #resizing = false;
 
   constructBar(template) {
     const forcedFirst = [
@@ -448,39 +491,39 @@ export default class ProgressBar {
     return stringd(stringd(str, template), variables);
   }
 
+  #printLines(lines, dontClean, addons = 0, ending = false) {
+    const stdout = this.cores.stdout;
+    if (!dontClean) {
+      // check https://github.com/freeall/single-line-log/blob/515b3b99b699396c2ad5f937e4b490b6f9fbff0e/index.js#L1-L3
+      stdout.moveCursor(0, -addons);
+      stdout.cursorTo(0);
+      stdout.clearScreenDown();
+    }
+    const cols = stdout.columns;
+    // eslint-disable-next-line no-control-regex
+    const strip = this.opts.bar.colorize ? l => l : l => l.replace(/\x1b\[\d+m/g, '');
+    stdout.write(
+      `${dontClean && ending && (addons || this.hasBarredOnce) ? '\n' : ''}${lines
+        .map(line => trimLine(strip(line), cols))
+        .join('\n')}`,
+    );
+  }
+
   /**
    * Print a message after a bar `draw` interrupt
-   * @param {'bar'|'end'} type Type of bar print or the first part of the printer
    * @param {any[]} content The contents to be formatted
    */
   print(type, ...content) {
-    const self = this;
     type = format(type);
-    if (!self.cores.stdout.isTTY) throw Error("Can't draw or print progressBar interrupts with piped output");
-    const cleanWrite = function cleanWrite(arr, dontClean, addons = 0, ending = false) {
-      if (!dontClean) {
-        // check https://github.com/freeall/single-line-log/blob/515b3b99b699396c2ad5f937e4b490b6f9fbff0e/index.js#L1-L3
-        self.cores.stdout.moveCursor(0, -addons);
-        self.cores.stdout.cursorTo(0);
-        self.cores.stdout.clearScreenDown();
-      }
-      self.cores.stdout.write(
-        `${dontClean && ending && (addons || self.hasBarredOnce) ? '\n' : ''}${self
-          .parseString(format(...arr))
-          // eslint-disable-next-line no-control-regex
-          .replace(self.opts.bar.colorize ? '' : /\x1b\[\d+m/g, '')}`,
-      );
-    };
-    let addonPack;
+    if (!this.cores.stdout.isTTY) throw Error("Can't draw or print progressBar interrupts with piped output");
     const addons = this.hasBarredOnce && !this.justLogged ? this.oldBar.length - 1 : 0;
+    const lines = this.parseString(
+      type === 'end' ? format(...content) : format((type.startsWith(':') && type.slice(1)) || type, ...content, '\n'),
+    ).split('\n');
     this.justLogged =
-      type === 'bar' && content.length === 1
-        ? !!cleanWrite(content, this.justLogged, addons)
-        : (addonPack = type.match(/^bar\+(\d+)/)) !== null
-        ? !!cleanWrite(content, this.justLogged, this.hasBarredOnce ? addonPack[1] : addons)
-        : type === 'end'
-        ? !!cleanWrite(content, !this.opts.clean, addons, true)
-        : !cleanWrite([(type.startsWith(':') && `${type.slice(1)}`) || type, ...content, '\n'], this.justLogged, addons, false);
+      type === 'end'
+        ? !!this.#printLines(lines, !this.opts.clean, addons, true)
+        : !this.#printLines(lines, this.justLogged, addons);
     if (this.justLogged && this.hasBarredOnce) this.draw(this.oldBar);
     return this;
   }
@@ -493,6 +536,9 @@ export default class ProgressBar {
     if (!this.isEnded) {
       if (message.length) this.print('end', ...message);
       this.isEnded = !0;
+      this.#resizing = false;
+      clearTimeout(this.#resizeTimer);
+      this.cores.stdout?.off('resize', this.#resizeHandler);
     }
     return this;
   }
