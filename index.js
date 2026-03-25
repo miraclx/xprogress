@@ -465,7 +465,7 @@ export default class ProgressBar {
         self.cores.stdout.clearScreenDown();
       }
       self.cores.stdout.write(
-        `${dontClean && ending && addons ? '\n' : ''}${self
+        `${dontClean && ending && (addons || self.hasBarredOnce) ? '\n' : ''}${self
           .parseString(format(...arr))
           // eslint-disable-next-line no-control-regex
           .replace(self.opts.bar.colorize ? '' : /\x1b\[\d+m/g, '')}`,
