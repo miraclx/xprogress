@@ -123,7 +123,7 @@ function parseBar(opts, fillable, percentage, headers = !opts.pulsate) {
   let empty = fillable - filled;
   let {filler, blank, header} = opts.bar;
   [filled, empty] = [filled, empty].map(Math.floor);
-  [filler, blank] = [filler, blank].map(content => (Array.isArray(content) || typeof content === 'string' ? content : ''));
+  [filler, blank] = [filler, blank].map(content => (typeof content === 'string' ? content : '?'));
   return stringd(
     [
       `:{color:bar:filled}${filler.repeat(filled)}`,
