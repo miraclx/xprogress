@@ -50,7 +50,7 @@
     "progress-stream": "^2.0.0",
     "speedometer": "^1.1.0",
     "stringd": "^2.2.0",
-    "stringd-colors": "^1.10.0",
+    "stringd-colors": "^1.11.0",
     "xbytes": "^1.6.1"
   }
 }
