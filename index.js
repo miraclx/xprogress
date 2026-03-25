@@ -422,6 +422,8 @@ export default class ProgressBar {
    * @param {String|Object} [template] The template to use on the drawn progress bar or an array of predrawn progressbar from `this.constructBar` like `this.oldBar`
    */
   draw(template) {
+    if (!Array.isArray(template))
+      this.cores.append = this.cores.append.filter(block => !(block.bar.opts.clean && block.bar.isComplete()));
     const result = Array.isArray(template)
       ? template
       : [
@@ -514,6 +516,7 @@ export default class ProgressBar {
    * @param {any[]} content The contents to be formatted
    */
   print(type, ...content) {
+    if (this.isChild) return this.cores.parent.print(type, ...content);
     type = format(type);
     if (!this.cores.stdout.isTTY) throw Error("Can't draw or print progressBar interrupts with piped output");
     const addons = this.hasBarredOnce && !this.justLogged ? this.oldBar.length - 1 : 0;
@@ -534,7 +537,10 @@ export default class ProgressBar {
    */
   end(...message) {
     if (!this.isEnded) {
-      if (message.length) this.print('end', ...message);
+      if (message.length) {
+        if (this.isChild) this.cores.parent.print(...message);
+        else this.print('end', ...message);
+      }
       this.isEnded = !0;
       this.#resizing = false;
       clearTimeout(this.#resizeTimer);
@@ -558,6 +564,21 @@ export default class ProgressBar {
   drop() {}
 
   /**
+   * Insert a bar immediately after an existing appended bar
+   * @param {ProgressBar} anchor The bar after which to insert
+   * @param {ProgressBar} bar The bar to insert
+   * @param {Boolean} inherit Whether or not to inherit bar templates from `this`
+   */
+  insertAfter(anchor, bar, inherit = !1) {
+    const idx = this.cores.append.findIndex(a => a.bar === anchor);
+    if (idx === -1) throw Error('Anchor bar not found');
+    const tail = this.cores.append.splice(idx + 1);
+    this.append(bar, inherit);
+    this.cores.append.push(...tail);
+    return this;
+  }
+
+  /**
    * Append the specified bar after `this`
    * @param {ProgressBar} bar The bar to be appended
    * @param {Boolean} inherit Whether or not to inherit bar templates from `this`
@@ -566,6 +587,8 @@ export default class ProgressBar {
     if (!ProgressBar.isBar(bar) && !bar.opts.template) throw Error('The Parameter <bar> is not a progressbar or a hanger');
     this.cores.append.push({bar, inherit});
     bar.cores.isKid = !0;
+    bar.cores.parent = this;
+    bar.cores.stdout?.off('resize', bar.#resizeHandler);
     return this;
   }
 
