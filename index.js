@@ -44,6 +44,7 @@ const globOpts = {
     'color:bar:separator': '',
   },
   forceFirst: !1,
+  keepHeader: !1,
 };
 
 const defaultOptions = {
@@ -124,6 +125,7 @@ function parseBar(opts, fillable, percentage, headers = !opts.pulsate) {
   let {filler, blank, header} = opts.bar;
   [filled, empty] = [filled, empty].map(Math.floor);
   [filler, blank] = [filler, blank].map(content => (typeof content === 'string' ? content : '?'));
+  if (!opts.keepHeader && headers && empty === 0) (filled += header.length), (headers = null);
   return stringd(
     [
       `:{color:bar:filled}${filler.repeat(filled)}`,
